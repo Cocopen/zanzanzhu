@@ -21,9 +21,19 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.loadCategories()
-    this.loadAccounts()
-    this.setDefaultDate()
+    this.setData({
+      billId: options.id // 保存账单 ID，用于编辑
+    })
+    
+    if (options.id) {
+      // 如果有 id 参数，加载账单详情
+      this.loadBillDetail(options.id)
+    } else {
+      // 否则，加载分类和账户列表
+      this.loadCategories()
+      this.loadAccounts()
+      this.setDefaultDate()
+    }
   },
 
   /**
@@ -165,16 +175,58 @@ Page({
   },
 
   /**
-   * 设置默认日期
+   * 加载账单详情
    */
-  setDefaultDate() {
-    const now = new Date()
-    const year = now.getFullYear()
-    const month = (now.getMonth() + 1).toString().padStart(2, '0')
-    const day = now.getDate().toString().padStart(2, '0')
-    this.setData({
-      selectedDate: `${year}-${month}-${day}`
+  loadBillDetail(id) {
+    const that = this
+    const db = wx.cloud.database()
+
+    console.log('开始加载账单详情，ID：', id)
+
+    db.collection('bills').doc(id).get({
+      success: res => {
+        const bill = res.data
+        console.log('账单详情加载成功：', bill)
+
+        // 设置页面数据
+        that.setData({
+          billType: bill.type,
+          amount: bill.amount.toString(),
+          selectedCategory: bill.category,
+          selectedAccount: bill.account,
+          remark: bill.remark || '',
+          // 格式化日期
+          selectedDate: that.formatDateForInput(bill.date)
+        })
+
+        // 加载分类和账户列表
+        that.loadCategories()
+        that.loadAccounts()
+
+        // 检查是否可以提交
+        that.checkCanSubmit()
+      },
+      fail: err => {
+        console.error('加载账单详情失败：', err)
+        wx.showModal({
+          title: '加载失败',
+          content: `无法加载账单详情：${err.errMsg || '未知错误'}`,
+          showCancel: false,
+          confirmText: '我知道了'
+        })
+      }
     })
+  },
+
+  /**
+   * 格式化日期为输入框格式
+   */
+  formatDateForInput(date) {
+    const d = new Date(date)
+    const year = d.getFullYear()
+    const month = (d.getMonth() + 1).toString().padStart(2, '0')
+    const day = d.getDate().toString().padStart(2, '0')
+    return `${year}-${month}-${day}`
   },
 
   /**
@@ -332,50 +384,79 @@ Page({
       account: this.data.selectedAccount,
       date: new Date(this.data.selectedDate),
       remark: this.data.remark,
-      createTime: db.serverDate()
+      updateTime: db.serverDate()
     }
 
     console.log('准备保存账单，数据：', bill)
 
     wx.showLoading({
-      title: '保存中...'
+      title: this.data.billId ? '更新中...' : '保存中...'
     })
 
-    db.collection('bills').add({
-      data: bill,
-      success: res => {
-        console.log('账单保存成功，_id：', res._id)
-        wx.hideLoading()
-        wx.showToast({
-          title: '记账成功',
-          icon: 'success'
-        })
+    if (this.data.billId) {
+      // 更新现有账单
+      db.collection('bills').doc(this.data.billId).update({
+        data: bill,
+        success: res => {
+          console.log('账单更新成功：', res)
+          wx.hideLoading()
+          wx.showToast({
+            title: '更新成功',
+            icon: 'success'
+          })
 
-        // 延迟返回首页
-        setTimeout(() => {
-          wx.navigateBack()
-        }, 1500)
-      },
-      fail: err => {
-        console.error('保存账单失败：', err)
-        console.error('错误代码：', err.errCode)
-        console.error('错误信息：', err.errMsg)
-
-        wx.hideLoading()
-
-        let errorMsg = '保存失败'
-        if (err.errMsg && err.errMsg.includes('collection not exists')) {
-          errorMsg = '数据库集合不存在，请先创建 bills 集合'
-        } else if (err.errMsg && err.errMsg.includes('permission')) {
-          errorMsg = '数据库权限不足，请检查 bills 集合权限'
+          // 延迟返回
+          setTimeout(() => {
+            wx.navigateBack()
+          }, 1500)
+        },
+        fail: err => {
+          console.error('更新账单失败：', err)
+          wx.hideLoading()
+          wx.showModal({
+            title: '更新失败',
+            content: `无法更新账单：${err.errMsg || '未知错误'}`,
+            showCancel: false
+          })
         }
+      })
+    } else {
+      // 创建新账单
+      bill.createTime = db.serverDate()
+      
+      db.collection('bills').add({
+        data: bill,
+        success: res => {
+          console.log('账单保存成功，_id：', res._id)
+          wx.hideLoading()
+          wx.showToast({
+            title: '记账成功',
+            icon: 'success'
+          })
 
-        wx.showModal({
-          title: '保存失败',
-          content: errorMsg,
-          showCancel: false
-        })
-      }
-    })
+          // 延迟返回
+          setTimeout(() => {
+            wx.navigateBack()
+          }, 1500)
+        },
+        fail: err => {
+          console.error('保存账单失败：', err)
+          wx.hideLoading()
+
+          let errorMsg = '保存失败'
+          if (err.errMsg && err.errMsg.includes('collection not exists')) {
+            errorMsg = '数据库集合不存在，请先创建 bills 集合'
+          } else if (err.errMsg && err.errMsg.includes('permission')) {
+            errorMsg = '数据库权限不足，请检查 bills 集合权限'
+          }
+
+          wx.showModal({
+            title: '保存失败',
+            content: errorMsg,
+            showCancel: false
+          })
+        }
+      })
+    }
   }
 })

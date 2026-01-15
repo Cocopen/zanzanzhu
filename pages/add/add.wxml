@@ -101,7 +101,12 @@
   <!-- 完成按钮 -->
   <view class="submit-section slide-up anim-delay-4">
     <button class="btn submit-btn" bindtap="submitBill" disabled="{{!canSubmit}}">
-      完成
+      {{billId ? '更新' : '完成'}}
+    </button>
+    
+    <!-- 删除按钮（仅编辑模式显示） -->
+    <button class="btn delete-btn" wx:if="{{billId}}" bindtap="deleteBill">
+      删除
     </button>
   </view>
 </view>

@@ -3,10 +3,12 @@ class WxCanvas {
     this.canvasId = canvasId;
     this.chart = null;
     this.isNew = isNew
+    this.canvasNode = canvasNode
 
     if (isNew) {
       // 新版 Canvas 2D
       this.canvasNode = ctx; // 这里的 ctx 实际上是 canvasNode
+      // 获取 2D 上下文
       this.ctx = this.canvasNode.getContext('2d');
     } else {
       // 旧版 Canvas
@@ -33,6 +35,8 @@ class WxCanvas {
 
   // 初始化 Canvas 上下文，确保所有方法都存在
   _initCanvasContext(ctx) {
+    if (!ctx) return; // 如果 ctx 不存在，直接返回
+    
     // 确保有 measureText 方法
     if (!ctx.measureText) {
       ctx.measureText = (text) => {
@@ -48,6 +52,8 @@ class WxCanvas {
 
   // 代理 Canvas 上下文的所有方法到 WxCanvas 实例
   _proxyMethods() {
+    if (!this.ctx) return; // 如果 ctx 不存在，直接返回
+    
     const canvasMethods = [
       'fillText',
       'strokeText',
@@ -112,6 +118,8 @@ class WxCanvas {
 
   // 添加事件监听
   _initEvent() {
+    if (!this.ctx) return; // 如果 ctx 不存在，直接返回
+    
     const eventNames = [
       {
         wxName: 'touchStart',
@@ -148,6 +156,8 @@ class WxCanvas {
   }
 
   _initStyle(ctx) {
+    if (!ctx) return; // 如果 ctx 不存在，直接返回
+    
     var styles = ['fillStyle', 'strokeStyle', 'globalAlpha',
       'shadowBlur', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY',
       'lineWidth', 'lineCap', 'lineJoin', 'fontSize', 'font',
@@ -175,8 +185,14 @@ class WxCanvas {
   removeEventListener() {}
 
   createCircularGradient(x0, y0, r0, x1, y1, r1) {
+    if (!this.canvasNode) return null; // 如果 canvasNode 不存在，返回 null
+    
     const canvas = this.isNew ? this.canvasNode : this.canvas;
+    if (!canvas) return null; // 如果 canvas 不存在，返回 null
+    
     const ctx = canvas.getContext('2d');
+    if (!ctx) return null; // 如果 ctx 不存在，返回 null
+    
     const gradient = ctx.createRadialGradient(x0, y0, r0, x1, y1, r1);
     return gradient;
   }

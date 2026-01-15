@@ -62,7 +62,7 @@
           wx:for-item="bill"
           wx:for-index="billIdx"
           style="animation-delay: {{billIdx * 0.05}}s"
-          bindtap="goToDetail"
+          bindtap="goToEdit"
           data-id="{{bill.id}}"
         >
           <view class="bill-icon" style="background: {{bill.category.color}}20">

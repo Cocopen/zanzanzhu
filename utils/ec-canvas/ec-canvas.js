@@ -20,7 +20,7 @@ function compareVersion(v1, v2) {
 
   // 确保 v1 和 v2 是字符串
   v1 = String(v1).split('.')
-  v2 = String(v2).split('')
+  v2 = String(v2).split('.')
 
   const len = Math.max(v1.length, v2.length)
 
@@ -158,10 +158,9 @@ Component({
           canvasNode.width = width * dpr
           canvasNode.height = height * dpr
 
-          const ctx = canvasNode.getContext('2d')
-          ctx.scale(dpr, dpr)
-
-          const canvas = new WxCanvas(canvasNode, this.data.canvasId, true, this)
+          // 创建 WxCanvas 实例，传递 canvasNode 作为第一个参数
+          // WxCanvas 构造函数会在内部获取 2D 上下文
+          const canvas = new WxCanvas(canvasNode, this.data.canvasId, true, canvasNode)
 
           // 使用新的 API 替代 setCanvasCreator（兼容性处理）
           if (echarts.setPlatformAPI) {
@@ -224,7 +223,10 @@ Component({
           zrX: touch.x,
           zrY: touch.y
         });
-        touchHandler.processGesture(wrapTouch(e), 'start');
+        // 检查 processGesture 方法是否存在
+        if (typeof touchHandler.processGesture === 'function') {
+          touchHandler.processGesture(wrapTouch(e), 'start');
+        }
       }
     },
 
@@ -236,7 +238,10 @@ Component({
           zrX: touch.x,
           zrY: touch.y
         });
-        touchHandler.processGesture(wrapTouch(e), 'change');
+        // 检查 processGesture 方法是否存在
+        if (typeof touchHandler.processGesture === 'function') {
+          touchHandler.processGesture(wrapTouch(e), 'change');
+        }
       }
     },
 
@@ -245,7 +250,10 @@ Component({
         var touchHandler = this.chart.getZr().handler;
         touchHandler.dispatch('mouseup', {});
         touchHandler.dispatch('click', {});
-        touchHandler.processGesture(wrapTouch(e), 'end');
+        // 检查 processGesture 方法是否存在
+        if (typeof touchHandler.processGesture === 'function') {
+          touchHandler.processGesture(wrapTouch(e), 'end');
+        }
       }
     }
   }

@@ -24,15 +24,48 @@ try {
 
 let chartInstance = null // 保存当前页面的实例，用于访问数据
 
-function initPieChart(canvas, width, height, dpr) {
+
+function initPieChart(canvas, width, height, echarts, dpr) {
   if (!echartsLoaded) return null
-  
+  dpr = 1
   console.log('🎨 initPieChart 被调用，开始初始化饼图')
+  console.log('📊 参数：', { width, height, echarts, dpr })
+  console.log('📊 canvas 类型：', typeof canvas)
+  console.log('📊 canvas 尺寸：', { width: canvas.width, height: canvas.height })
   
-  pieChart = echarts.init(canvas, null, {
-    width: width,
-    height: height,
-    devicePixelRatio: dpr
+  // 处理参数传递方式的兼容性问题
+  // 新版 API: (canvas, width, height, echarts, dpr)
+  // 旧版 API: (canvas, width, height, dpr)
+  let actualEcharts = echarts
+  let actualDpr = dpr
+  
+  // 检查是否是旧版 API 的参数传递方式
+  if (typeof echarts === 'number') {
+    // 旧版 API: 第四个参数是 dpr
+    actualDpr = echarts
+    actualEcharts = require('../../utils/ec-canvas/echarts')
+    console.log('📊 使用旧版 API 参数传递方式')
+  } else {
+    console.log('📊 使用新版 API 参数传递方式')
+  }
+  
+  // 明确设置 Canvas 元素的尺寸
+  if (canvas.canvasNode) {
+    // 新版 Canvas API
+    canvas.canvasNode.width = width * (actualDpr || 2)
+    canvas.canvasNode.height = height * (actualDpr || 2)
+    console.log('📊 设置新版 Canvas 尺寸：', { width: canvas.canvasNode.width, height: canvas.canvasNode.height })
+  }
+  
+  // 确保 width 和 height 是有效的数字
+  const actualWidth = Number(width) || 400
+  const actualHeight = Number(height) || 400
+  console.log('📊 实际使用的尺寸：', { actualWidth, actualHeight })
+  
+  pieChart = actualEcharts.init(canvas, null, {
+    width: actualWidth,
+    height: actualHeight,
+    devicePixelRatio: actualDpr || 2 // 提高设备像素比，确保图表清晰度
   })
   canvas.setChart(pieChart)
   
@@ -47,17 +80,36 @@ function initPieChart(canvas, width, height, dpr) {
   return pieChart
 }
 
-function initLineChart(canvas, width, height, dpr) {
+function initLineChart(canvas, width, height, echarts, dpr) {
   if (!echartsLoaded) return null
+  console.log('🎨 initLineChart 被调用，开始初始化折线图')
+  console.log('📊 参数：++++++++++++++', { width, height, echarts, dpr })
   
-  lineChart = echarts.init(canvas, null, {
-    width: width,
-    height: height,
-    devicePixelRatio: dpr
+  // 处理参数传递方式的兼容性问题
+  // 新版 API: (canvas, width, height, echarts, dpr)
+  // 旧版 API: (canvas, width, height, dpr)
+  let actualEcharts = echarts
+  let actualDpr = dpr
+  
+  // 检查是否是旧版 API 的参数传递方式
+  if (typeof echarts === 'number') {
+    // 旧版 API: 第四个参数是 dpr
+    actualDpr = echarts
+    actualEcharts = require('../../utils/ec-canvas/echarts')
+    console.log('📊 使用旧版 API 参数传递方式')
+  } else {
+    console.log('📊 使用新版 API 参数传递方式')
+  }
+  
+  lineChart = actualEcharts.init(canvas, null, {
+    width: width * actualDpr,
+    height: height * actualDpr,
+    devicePixelRatio: actualDpr || 2 // 提高设备像素比，确保图表清晰度
   })
   canvas.setChart(lineChart)
   return lineChart
 }
+
 
 Page({
   /**
@@ -302,46 +354,36 @@ Page({
     }
 
     try {
+      // 使用简化的配置
       const option = {
         tooltip: {
           trigger: 'item',
           formatter: '{b}: {c}元 ({d}%)'
         },
-        legend: {
-          show: false
-        },
         series: [{
           name: '支出',
-          type: 'pie',
-          radius: ['35%', '75%'],
-          center: ['50%', '45%'],
-          avoidLabelOverlap: true,
-          itemStyle: {
-            borderRadius: 10,
-            borderColor: '#fff',
-            borderWidth: 2
-          },
-          label: {
-            show: false
-          },
-          emphasis: {
-            label: {
-              show: true,
-              fontSize: 16,
-              fontWeight: 'bold'
-            }
-          },
+          type: 'pie', 
+          radius: '60%',
+          center: ['50%', '50%'],
           data: this.data.pieData.map(item => ({
             name: item.name,
             value: item.value,
             itemStyle: {
               color: item.color
             }
-          }))
+          })),
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
         }]
       }
 
       pieChart.setOption(option)
+      
       console.log('✅ 饼图渲染成功')
       this.setData({ useTextChart: false })
     } catch (error) {

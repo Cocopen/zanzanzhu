@@ -145,7 +145,7 @@
 
 .chart-container {
   width: 100%;
-  height: 600rpx;
+  height: 700rpx; /* 增加图表容器高度，确保图表有足够空间显示 */
   margin-bottom: 24rpx;
   position: relative;
 }

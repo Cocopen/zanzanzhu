@@ -284,12 +284,12 @@ Page({
   },
 
   /**
-   * 查看账单详情
+   * 编辑账单
    */
-  goToDetail(e) {
+  goToEdit(e) {
     const id = e.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/bills/detail?id=${id}`
+      url: `/pages/add/add?id=${id}`
     })
   },
 
