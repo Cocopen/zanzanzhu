@@ -1,0 +1,126 @@
+<!--pages/bills/bills.wxml-->
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header-section fade-in">
+    <view class="title-section">
+      <text class="title-large">账单明细</text>
+      <text class="subtitle">记录每一笔消费</text>
+    </view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-bar slide-up anim-delay-1">
+    <view class="filter-card glass">
+      <view class="filter-item {{filterType === 'all' ? 'active' : ''}}" bindtap="switchFilter" data-type="all">
+        <text class="filter-text">全部</text>
+      </view>
+      <view class="filter-item {{filterType === 'income' ? 'active' : ''}}" bindtap="switchFilter" data-type="income">
+        <text class="filter-text text-green">收入</text>
+      </view>
+      <view class="filter-item {{filterType === 'expense' ? 'active' : ''}}" bindtap="switchFilter" data-type="expense">
+        <text class="filter-text text-red">支出</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 月份选择 -->
+  <view class="month-selector slide-up anim-delay-2">
+    <view class="month-card glass">
+      <view class="flex-center" bindtap="prevMonth">
+        <text class="icon-arrow-left"></text>
+      </view>
+      <view class="month-text">
+        <text class="text-base font-semibold">{{currentYear}}年{{currentMonth}}月</text>
+      </view>
+      <view class="flex-center" bindtap="nextMonth">
+        <text class="icon-arrow-right"></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 账单列表 -->
+  <view class="bills-section slide-up anim-delay-3">
+    <view class="empty" wx:if="{{groupedBills.length === 0}}">
+      <text class="empty-icon">📝</text>
+      <text class="text-gray text-lg mt-lg">暂无账单记录</text>
+      <text class="text-gray text-sm mt-sm">点击下方按钮开始记账</text>
+    </view>
+
+    <view class="bill-group" wx:for="{{groupedBills}}" wx:key="date">
+      <!-- 日期分组标题 -->
+      <view class="group-header">
+        <text class="group-date text-base font-semibold">{{item.date}}</text>
+        <text class="group-total text-sm text-gray">支出¥{{item.expense}} 收入¥{{item.income}}</text>
+      </view>
+
+      <!-- 账单列表 -->
+      <view class="bills-list">
+        <view 
+          class="bill-item card-entrance" 
+          wx:for="{{item.bills}}" 
+          wx:key="id" 
+          wx:for-item="bill"
+          wx:for-index="billIdx"
+          style="animation-delay: {{billIdx * 0.05}}s"
+          bindtap="goToDetail"
+          data-id="{{bill.id}}"
+        >
+          <view class="bill-icon" style="background: {{bill.category.color}}20">
+            <text class="bill-icon-text" style="color: {{bill.category.color}}">{{bill.category.icon}}</text>
+          </view>
+          <view class="bill-info">
+            <view class="bill-header">
+              <text class="bill-name text-base font-medium">{{bill.category.name}}</text>
+              <text class="bill-amount text-lg font-semibold {{bill.type === 'expense' ? 'text-red' : 'text-green'}}">
+                {{bill.type === 'expense' ? '-' : '+'}}¥{{bill.amount}}
+              </text>
+            </view>
+            <view class="bill-detail">
+              <text class="bill-account text-sm text-gray">{{bill.account.name}}</text>
+              <text class="bill-time text-sm text-gray">{{bill.time}}</text>
+            </view>
+            <view class="bill-remark" wx:if="{{bill.remark}}">
+              <text class="text-sm text-gray">{{bill.remark}}</text>
+            </view>
+          </view>
+          <view class="bill-arrow">
+            <text class="icon-arrow">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计卡片 -->
+  <view class="stats-card slide-up anim-delay-4" wx:if="{{groupedBills.length > 0}}">
+    <view class="card glass">
+      <view class="stats-header flex-between mb-md">
+        <text class="text-base font-semibold">本月统计</text>
+        <text class="text-sm text-gray">{{currentYear}}年{{currentMonth}}月</text>
+      </view>
+      <view class="stats-content">
+        <view class="stat-item">
+          <text class="stat-label text-sm text-gray">总收入</text>
+          <text class="stat-value text-xl font-semibold text-green">¥{{monthStats.income}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label text-sm text-gray">总支出</text>
+          <text class="stat-value text-xl font-semibold text-red">¥{{monthStats.expense}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label text-sm text-gray">结余</text>
+          <text class="stat-value text-xl font-semibold text-blue">¥{{monthStats.balance}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label text-sm text-gray">笔数</text>
+          <text class="stat-value text-xl font-semibold">{{monthStats.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速记账按钮 -->
+  <view class="fab" bindtap="goToAdd">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

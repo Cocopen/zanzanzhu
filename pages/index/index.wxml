@@ -1,0 +1,139 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 顶部标题区域 -->
+  <view class="header-section anim-fade-in">
+    <view class="title-section">
+      <text class="title-large">你的财务，</text>
+      <text class="title-large gradient-text">一目了然</text>
+    </view>
+    <text class="subtitle">智能记账，轻松管理每一笔收支</text>
+  </view>
+
+  <!-- 月份选择器 -->
+  <view class="month-selector slide-up anim-delay-1">
+    <view class="month-card glass">
+      <view class="flex-center" bindtap="prevMonth">
+        <text class="icon-arrow-left"></text>
+      </view>
+      <view class="month-text">
+        <text class="text-lg font-semibold">{{currentYear}}年{{currentMonth}}月</text>
+      </view>
+      <view class="flex-center" bindtap="nextMonth">
+        <text class="icon-arrow-right"></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收支概览卡片 -->
+  <view class="overview-section">
+    <!-- 收入卡片 -->
+    <view class="card card-large income-card slide-up anim-delay-2">
+      <view class="card-header">
+        <view class="icon-wrapper icon-income">
+          <text class="icon-income-symbol">↓</text>
+        </view>
+        <text class="card-title text-gray">本月收入</text>
+      </view>
+      <view class="card-body">
+        <text class="amount-text text-green font-bold number-growth">¥{{monthIncome}}</text>
+      </view>
+      <view class="card-footer">
+        <text class="text-sm text-gray">较上月</text>
+        <text class="text-sm {{incomeTrend > 0 ? 'text-green' : 'text-red'}}">
+          {{incomeTrend > 0 ? '↑' : '↓'}}{{Math.abs(incomeTrend)}}%
+        </text>
+      </view>
+    </view>
+
+    <!-- 支出卡片 -->
+    <view class="card card-large expense-card slide-up anim-delay-3">
+      <view class="card-header">
+        <view class="icon-wrapper icon-expense">
+          <text class="icon-expense-symbol">↑</text>
+        </view>
+        <text class="card-title text-gray">本月支出</text>
+      </view>
+      <view class="card-body">
+        <text class="amount-text text-red font-bold number-growth">¥{{monthExpense}}</text>
+      </view>
+      <view class="card-footer">
+        <text class="text-sm text-gray">较上月</text>
+        <text class="text-sm {{expenseTrend > 0 ? 'text-red' : 'text-green'}}">
+          {{expenseTrend > 0 ? '↑' : '↓'}}{{Math.abs(expenseTrend)}}%
+        </text>
+      </view>
+    </view>
+
+    <!-- 结余卡片 -->
+    <view class="card card-large balance-card slide-up anim-delay-4">
+      <view class="card-header">
+        <view class="icon-wrapper icon-balance">
+          <text class="icon-balance-symbol">¥</text>
+        </view>
+        <text class="card-title text-gray">本月结余</text>
+      </view>
+      <view class="card-body">
+        <text class="amount-text gradient-text font-bold number-growth">¥{{monthBalance}}</text>
+      </view>
+      <view class="card-footer">
+        <text class="text-sm text-gray">预算进度</text>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{budgetProgress}}%"></view>
+        </view>
+        <text class="text-sm text-gray">{{budgetProgress}}%</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速统计 -->
+  <view class="quick-stats slide-up anim-delay-5">
+    <view class="card glass">
+      <view class="stats-title text-base font-semibold mb-md">本月支出排行</view>
+      
+      <view class="stats-list">
+        <view class="stats-item" wx:for="{{topCategories}}" wx:key="index">
+          <view class="stats-icon" style="background: {{item.color}}20">
+            <text class="stats-icon-text" style="color: {{item.color}}">{{item.icon}}</text>
+          </view>
+          <view class="stats-info">
+            <text class="stats-name text-sm font-medium">{{item.name}}</text>
+            <text class="stats-amount text-xs text-gray">¥{{item.amount}}</text>
+          </view>
+          <view class="stats-percent">
+            <text class="text-sm font-semibold text-blue">{{item.percent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近账单 -->
+  <view class="recent-bills slide-up anim-delay-5">
+    <view class="flex-between mb-md">
+      <text class="title-medium">最近账单</text>
+      <text class="text-sm text-blue" bindtap="goToBills">查看全部</text>
+    </view>
+    
+    <view class="bills-list">
+      <view class="bill-item card-entrance" wx:for="{{recentBills}}" wx:key="id" wx:for-index="idx" style="animation-delay: {{(idx + 1) * 0.1}}s" bindtap="goToBillDetail" data-id="{{item.id}}">
+        <view class="bill-icon" style="background: {{item.category.color}}20">
+          <text class="bill-icon-text" style="color: {{item.category.color}}">{{item.category.icon}}</text>
+        </view>
+        <view class="bill-info">
+          <text class="bill-name text-base font-medium">{{item.category.name}}</text>
+          <text class="bill-date text-xs text-gray">{{item.date}}</text>
+        </view>
+        <view class="bill-amount">
+          <text class="text-lg font-semibold {{item.type === 'expense' ? 'text-red' : 'text-green'}}">
+            {{item.type === 'expense' ? '-' : '+'}}¥{{item.amount}}
+          </text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快速记账按钮 -->
+  <view class="fab" bindtap="goToAdd">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

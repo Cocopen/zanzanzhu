@@ -1,0 +1,7 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "我的财务",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#fafdff",
+  "backgroundTextStyle": "dark"
+}

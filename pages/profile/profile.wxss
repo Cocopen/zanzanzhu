@@ -1,0 +1,297 @@
+/* pages/profile/profile.wxss */
+@import "../../theme.wxss";
+@import "../../animation.wxss";
+
+.container {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  padding: 48rpx 24rpx 32rpx;
+}
+
+/* 用户信息 */
+.user-section {
+  margin-bottom: 32rpx;
+}
+
+.user-card {
+  padding: 48rpx;
+  border-radius: 48rpx;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.user-avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.user-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f2f2f7, #e5e5ea);
+}
+
+.avatar-edit {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--apple-blue), var(--apple-blue-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+}
+
+.avatar-edit-icon {
+  font-size: 24rpx;
+  line-height: 1;
+}
+
+.user-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-desc {
+  font-size: 26rpx;
+}
+
+.user-arrow {
+  flex-shrink: 0;
+}
+
+.icon-arrow {
+  font-size: 48rpx;
+  color: var(--apple-gray-1);
+  font-weight: 300;
+}
+
+/* 统计数据 */
+.stats-section {
+  margin-bottom: 32rpx;
+}
+
+.stats-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 48rpx 32rpx;
+  border-radius: 48rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 26rpx;
+}
+
+.stat-divider {
+  width: 1rpx;
+  height: 80rpx;
+  background: linear-gradient(180deg, transparent, rgba(134, 134, 139, 0.3), transparent);
+}
+
+/* 功能菜单 */
+.menu-section {
+  margin-bottom: 32rpx;
+}
+
+.menu-card {
+  background: #fff;
+  border-radius: 32rpx;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 113, 227, 0.06);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  transition: all 0.3s ease;
+}
+
+.menu-item:active {
+  background: #f2f2f7;
+}
+
+.menu-left {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-icon-text {
+  font-size: 40rpx;
+  line-height: 1;
+}
+
+.menu-label {
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.menu-right {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-shrink: 0;
+}
+
+.menu-divider {
+  height: 1rpx;
+  background: linear-gradient(90deg, transparent, rgba(134, 134, 139, 0.2), transparent);
+  margin: 0 32rpx;
+}
+
+/* 版本信息 */
+.version-section {
+  text-align: center;
+  padding: 48rpx 0;
+}
+
+/* 模态框 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 9999;
+}
+
+.modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  width: 80%;
+  max-width: 600rpx;
+  background: #fff;
+  border-radius: 48rpx;
+  padding: 48rpx;
+  transform: scale(0.8);
+  transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  margin-bottom: 32rpx;
+}
+
+.modal-title {
+  font-size: 36rpx;
+  font-weight: 600;
+}
+
+.modal-body {
+  margin-bottom: 32rpx;
+}
+
+.modal-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: var(--apple-gray-1);
+}
+
+.modal-footer {
+  display: flex;
+  gap: 24rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  border-radius: 44rpx;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-btn-primary {
+  background: linear-gradient(135deg, var(--apple-blue), var(--apple-blue-light));
+  color: #fff;
+}
+
+.modal-btn-secondary {
+  background: #f2f2f7;
+  color: var(--apple-blue);
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .user-avatar {
+    width: 100rpx;
+    height: 100rpx;
+  }
+  
+  .stat-value {
+    font-size: 40rpx;
+  }
+  
+  .menu-icon {
+    width: 64rpx;
+    height: 64rpx;
+  }
+  
+  .menu-icon-text {
+    font-size: 32rpx;
+  }
+}

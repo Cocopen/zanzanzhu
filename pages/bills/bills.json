@@ -1,0 +1,7 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "账单明细",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#fafdff",
+  "backgroundTextStyle": "dark"
+}

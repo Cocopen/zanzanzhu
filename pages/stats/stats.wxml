@@ -1,0 +1,148 @@
+<!--pages/stats/stats.wxml-->
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header-section fade-in">
+    <view class="title-section">
+      <text class="title-large">财务分析</text>
+      <text class="subtitle">用数据洞察消费趋势</text>
+    </view>
+  </view>
+
+  <!-- 时间警告提示 -->
+  <view class="time-warning slide-up" wx:if="{{showTimeWarning}}">
+    <view class="warning-card">
+      <view class="warning-content">
+        <text class="warning-icon">⚠️</text>
+        <text class="warning-text">当前查看的月份与系统时间相差较大，可能导致查询不到数据</text>
+      </view>
+      <view class="warning-action" bindtap="backToCurrent">
+        <text class="warning-button">回到当前月份</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 月份/年度切换 -->
+  <view class="period-selector slide-up anim-delay-1">
+    <view class="selector-card glass">
+      <view class="selector-item {{periodType === 'month' ? 'active' : ''}}" bindtap="switchPeriod" data-type="month">
+        <text class="selector-text">月度</text>
+      </view>
+      <view class="selector-item {{periodType === 'year' ? 'active' : ''}}" bindtap="switchPeriod" data-type="year">
+        <text class="selector-text">年度</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 月份选择（仅月度视图显示） -->
+  <view class="month-selector slide-up anim-delay-2" wx:if="{{periodType === 'month'}}">
+    <view class="month-card glass">
+      <view class="flex-center" bindtap="prevMonth">
+        <text class="icon-arrow-left"></text>
+      </view>
+      <view class="month-text">
+        <text class="text-lg font-semibold">{{currentYear}}年{{currentMonth}}月</text>
+      </view>
+      <view class="flex-center" bindtap="nextMonth">
+        <text class="icon-arrow-right"></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 年度选择（仅年度视图显示） -->
+  <view class="year-selector slide-up anim-delay-2" wx:if="{{periodType === 'year'}}">
+    <view class="year-card glass">
+      <view class="flex-center" bindtap="prevYear">
+        <text class="icon-arrow-left"></text>
+      </view>
+      <view class="year-text">
+        <text class="text-lg font-semibold">{{currentYear}}年</text>
+      </view>
+      <view class="flex-center" bindtap="nextYear">
+        <text class="icon-arrow-right"></text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 支出饼图 -->
+  <view class="chart-section slide-up anim-delay-3">
+    <view class="card">
+      <view class="chart-header">
+        <view class="chart-title">
+          <text class="title-medium">支出构成</text>
+          <text class="text-sm text-gray">按分类统计</text>
+        </view>
+      </view>
+      
+      <view class="chart-container">
+        <view class="empty-chart" wx:if="{{pieData.length === 0}}">
+          <text class="empty-icon">📊</text>
+          <text class="empty-title">暂无支出数据</text>
+          <text class="empty-desc">本月还没有记账，或者选择的月份没有数据</text>
+        </view>
+        <ec-canvas id="mychart-dom-pie" canvas-id="mychart-pie" ec="{{ pieEc }}" wx:else></ec-canvas>
+      </view>
+      
+      <view class="chart-legend">
+        <view class="legend-item" wx:for="{{pieData}}" wx:key="name">
+          <view class="legend-color" style="background: {{item.color}}"></view>
+          <text class="legend-name text-sm">{{item.name}}</text>
+          <text class="legend-value text-sm font-semibold">{{item.value}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收支趋势图 -->
+  <view class="chart-section slide-up anim-delay-4">
+    <view class="card">
+      <view class="chart-header">
+        <view class="chart-title">
+          <text class="title-medium">收支趋势</text>
+          <text class="text-sm text-gray">近12个月变化</text>
+        </view>
+      </view>
+      
+      <view class="chart-container">
+        <view class="empty-chart" wx:if="{{!lineChartData}}">
+          <text class="empty-icon">📈</text>
+          <text class="empty-title">暂无趋势数据</text>
+          <text class="empty-desc">最近12个月还没有记账记录</text>
+        </view>
+        <ec-canvas id="mychart-dom-line" canvas-id="mychart-line" ec="{{ lineEc }}" wx:else></ec-canvas>
+      </view>
+    </view>
+  </view>
+
+  <!-- 数据卡片 -->
+  <view class="data-cards slide-up anim-delay-5">
+    <view class="card data-card" wx:for="{{dataCards}}" wx:key="title">
+      <view class="data-icon" style="background: {{item.color}}20">
+        <text class="data-icon-text" style="color: {{item.color}}">{{item.icon}}</text>
+      </view>
+      <view class="data-content">
+        <text class="data-title text-sm text-gray">{{item.title}}</text>
+        <text class="data-value text-2xl font-semibold {{item.textClass}}">{{item.value}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 消费建议 -->
+  <view class="suggestion-section slide-up anim-delay-5">
+    <view class="card glass">
+      <view class="suggestion-header">
+        <text class="text-lg font-semibold">消费建议</text>
+      </view>
+      <view class="suggestion-content">
+        <view class="suggestion-item" wx:for="{{suggestions}}" wx:key="index">
+          <view class="suggestion-icon">
+            <text class="suggestion-icon-text">{{item.icon}}</text>
+          </view>
+          <view class="suggestion-text">
+            <text class="text-base font-medium">{{item.title}}</text>
+            <text class="text-sm text-gray mt-sm">{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

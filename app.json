@@ -1,0 +1,55 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/add/add",
+    "pages/stats/stats",
+    "pages/bills/bills",
+    "pages/profile/profile"
+  ],
+  "tabBar": {
+    "custom": false,
+    "color": "#86868b",
+    "selectedColor": "#0071e3",
+    "backgroundColor": "#fafdff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计",
+        "iconPath": "assets/icons/stats.png",
+        "selectedIconPath": "assets/icons/stats-active.png"
+      },
+      {
+        "pagePath": "pages/bills/bills",
+        "text": "账单",
+        "iconPath": "assets/icons/bills.png",
+        "selectedIconPath": "assets/icons/bills-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fafdff",
+    "navigationBarTitleText": "个人记账",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fafdff"
+  },
+  "style": "v2",
+  "useExtendedLib": {
+    "weui": true
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

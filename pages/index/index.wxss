@@ -1,0 +1,300 @@
+/* pages/index/index.wxss */
+@import "../../theme.wxss";
+@import "../../animation.wxss";
+
+.container {
+  min-height: 100vh;
+  padding: 48rpx 24rpx 200rpx;
+}
+
+/* 顶部标题区域 */
+.header-section {
+  padding: 32rpx 0 48rpx;
+}
+
+.title-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 月份选择器 */
+.month-selector {
+  margin-bottom: 32rpx;
+}
+
+.month-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  border-radius: 48rpx;
+}
+
+.month-text {
+  flex: 1;
+  text-align: center;
+}
+
+.icon-arrow-left,
+.icon-arrow-right {
+  font-size: 32rpx;
+  color: var(--apple-blue);
+  padding: 0 24rpx;
+}
+
+/* 收支概览卡片 */
+.overview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.icon-wrapper {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+}
+
+.icon-income {
+  background: linear-gradient(135deg, #30d15820, #34c75920);
+}
+
+.icon-income-symbol {
+  color: #34c759;
+  font-weight: 600;
+}
+
+.icon-expense {
+  background: linear-gradient(135deg, #ff453a20, #ff3b3020);
+}
+
+.icon-expense-symbol {
+  color: #ff3b30;
+  font-weight: 600;
+}
+
+.icon-balance {
+  background: linear-gradient(135deg, #0071e320, #2997ff20);
+}
+
+.icon-balance-symbol {
+  color: var(--apple-blue);
+  font-weight: 600;
+}
+
+.card-title {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.card-body {
+  margin-bottom: 16rpx;
+}
+
+.amount-text {
+  font-size: 64rpx;
+  line-height: 1.2;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* 进度条 */
+.progress-bar {
+  flex: 1;
+  height: 8rpx;
+  background: var(--apple-gray-4);
+  border-radius: 8rpx;
+  overflow: hidden;
+  margin: 0 16rpx;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--apple-blue), var(--apple-blue-light));
+  border-radius: 8rpx;
+  transition: width 0.3s ease;
+}
+
+/* 快速统计 */
+.quick-stats {
+  margin-bottom: 32rpx;
+}
+
+.stats-title {
+  font-size: 32rpx;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.stats-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+}
+
+.stats-item:active {
+  transform: scale(0.98);
+  background: var(--bg-gradient);
+}
+
+.stats-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stats-icon-text {
+  font-size: 40rpx;
+}
+
+.stats-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.stats-name {
+  font-size: 28rpx;
+}
+
+.stats-amount {
+  font-size: 24rpx;
+}
+
+.stats-percent {
+  text-align: right;
+}
+
+/* 最近账单 */
+.recent-bills {
+  padding-bottom: 32rpx;
+}
+
+.bills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.bill-item {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  transition: all 0.3s ease;
+}
+
+.bill-item:active {
+  transform: scale(0.98);
+  background: var(--bg-gradient);
+}
+
+.bill-icon {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bill-icon-text {
+  font-size: 48rpx;
+}
+
+.bill-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.bill-name {
+  font-size: 30rpx;
+}
+
+.bill-date {
+  font-size: 24rpx;
+}
+
+.bill-amount {
+  text-align: right;
+}
+
+/* 快速记账按钮 */
+.fab {
+  position: fixed;
+  bottom: 160rpx;
+  right: 32rpx;
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--apple-blue), var(--apple-blue-light));
+  box-shadow: 0 12px 40px rgba(0, 113, 227, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.fab:active {
+  transform: scale(0.9);
+  box-shadow: 0 8px 24px rgba(0, 113, 227, 0.3);
+}
+
+.fab-icon {
+  font-size: 72rpx;
+  color: #fff;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* 响应式调整 */
+@media (max-width: 375px) {
+  .amount-text {
+    font-size: 56rpx;
+  }
+  
+  .title-large {
+    font-size: 44rpx;
+  }
+}

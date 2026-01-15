@@ -1,0 +1,12 @@
+{
+  "name": "exportData",
+  "version": "1.0.0",
+  "description": "导出记账数据",
+  "main": "index.js",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
