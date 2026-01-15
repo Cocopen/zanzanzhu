@@ -230,6 +230,19 @@ Page({
   },
 
   /**
+   * 设置默认日期为今天
+   */
+  setDefaultDate() {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = (today.getMonth() + 1).toString().padStart(2, '0')
+    const day = today.getDate().toString().padStart(2, '0')
+    this.setData({
+      selectedDate: `${year}-${month}-${day}`
+    })
+  },
+
+  /**
    * 切换收支类型
    */
   switchType(e) {
@@ -458,5 +471,68 @@ Page({
         }
       })
     }
+  },
+
+  /**
+   * 删除账单
+   */
+  deleteBill() {
+    const that = this
+    const billId = this.data.billId
+    
+    if (!billId) return
+    
+    wx.showModal({
+      title: '删除确认',
+      content: '确定要删除这条账单记录吗？此操作不可恢复。',
+      cancelText: '取消',
+      confirmText: '删除',
+      confirmColor: '#ff3b30',
+      success: function(res) {
+        if (res.confirm) {
+          const db = wx.cloud.database()
+          
+          wx.showLoading({
+            title: '删除中...'
+          })
+          
+          db.collection('bills').doc(billId).remove({
+            success: function(res) {
+              console.log('账单删除成功：', res)
+              wx.hideLoading()
+              wx.showToast({
+                title: '删除成功',
+                icon: 'success'
+              })
+              
+              // 延迟返回
+              setTimeout(() => {
+                wx.navigateBack()
+              }, 1500)
+            },
+            fail: function(err) {
+              console.error('删除账单失败：', err)
+              wx.hideLoading()
+              
+              // 处理不同类型的错误
+              let errorMsg = '删除失败'
+              if (err.errMsg && err.errMsg.includes('permission')) {
+                errorMsg = '权限不足，无法删除此账单'
+              } else if (err.errMsg && err.errMsg.includes('document not found')) {
+                errorMsg = '账单不存在或已被删除'
+              } else if (err.errMsg && err.errMsg.includes('collection not exists')) {
+                errorMsg = '数据库集合不存在，请先创建 bills 集合'
+              }
+              
+              wx.showModal({
+                title: '删除失败',
+                content: errorMsg,
+                showCancel: false
+              })
+            }
+          })
+        }
+      }
+    })
   }
 })
