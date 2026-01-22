@@ -3,8 +3,8 @@
   <!-- 用户信息卡片 -->
   <view class="user-section slide-up">
     <view class="user-card glass">
-      <view class="user-info flex-between">
-        <view class="user-avatar-wrapper" bindtap="showUserModal">
+      <view class="user-info flex-between" bindtap="showUserModal">
+        <view class="user-avatar-wrapper">
           <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/icons/default-avatar.png'}}" mode="aspectFill"></image>
           <view class="avatar-edit">
             <text class="avatar-edit-icon">✏️</text>

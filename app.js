@@ -16,8 +16,8 @@ App({
       }
     })
     
-    // 获取用户信息
-    this.getUserInfo()
+    // 检查是否首次使用
+    this.checkFirstUse()
   },
   
   onShow() {
@@ -35,28 +35,29 @@ App({
     currentYear: new Date().getFullYear()
   },
   
-  // 获取用户信息
-  getUserInfo() {
-    const that = this
-    wx.getSetting({
-      success: res => {
-        if (res.authSetting['scope.userInfo']) {
-          wx.getUserInfo({
-            success: res => {
-              that.globalData.userInfo = res.userInfo
-              // 存储用户信息到云数据库
-              that.saveUserInfo(res.userInfo)
-            }
-          })
-        }
-      }
-    })
+  // 检查是否首次使用
+  checkFirstUse() {
+    const hasUsed = wx.getStorageSync('hasUsed')
+    if (!hasUsed) {
+      // 首次使用，设置标志
+      wx.setStorageSync('hasUsed', true)
+      // 显示欢迎提示
+      setTimeout(() => {
+        wx.showModal({
+          title: '欢迎使用记账小程序',
+          content: '点击"我的"页面可以设置您的头像和昵称',
+          showCancel: false,
+          confirmText: '知道了'
+        })
+      }, 1000)
+    }
   },
   
   // 保存用户信息到云数据库
   saveUserInfo(userInfo) {
+    if (!userInfo) return
+    
     const db = wx.cloud.database()
-    const _ = db.command
     
     db.collection('users').where({
       _openid: '{openid}'
@@ -66,8 +67,8 @@ App({
           // 新用户
           db.collection('users').add({
             data: {
-              nickName: userInfo.nickName,
-              avatarUrl: userInfo.avatarUrl,
+              nickName: userInfo.nickName || '新用户',
+              avatarUrl: userInfo.avatarUrl || '',
               createTime: db.serverDate(),
               updateTime: db.serverDate()
             }
@@ -76,8 +77,8 @@ App({
           // 更新用户信息
           db.collection('users').doc(res.data[0]._id).update({
             data: {
-              nickName: userInfo.nickName,
-              avatarUrl: userInfo.avatarUrl,
+              nickName: userInfo.nickName || '新用户',
+              avatarUrl: userInfo.avatarUrl || '',
               updateTime: db.serverDate()
             }
           })

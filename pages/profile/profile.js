@@ -67,41 +67,130 @@ Page({
    * 显示用户信息编辑
    */
   showUserModal() {
-    wx.getUserProfile({
-      desc: '用于完善用户资料',
-      success: res => {
-        app.globalData.userInfo = res.userInfo
-        this.setData({
-          userInfo: res.userInfo
-        })
-        
-        // 保存到云数据库
-        const db = wx.cloud.database()
-        db.collection('users').where({
-          _openid: '{openid}'
-        }).get({
-          success: result => {
-            if (result.data.length === 0) {
-              db.collection('users').add({
-                data: {
-                  nickName: res.userInfo.nickName,
-                  avatarUrl: res.userInfo.avatarUrl,
-                  createTime: db.serverDate(),
-                  updateTime: db.serverDate()
-                }
-              })
-            } else {
-              db.collection('users').doc(result.data[0]._id).update({
-                data: {
-                  nickName: res.userInfo.nickName,
-                  avatarUrl: res.userInfo.avatarUrl,
-                  updateTime: db.serverDate()
-                }
-              })
-            }
-          }
+    wx.showActionSheet({
+      itemList: ['更新头像', '更新昵称'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          this.updateAvatar()
+        } else if (res.tapIndex === 1) {
+          this.updateNickName()
+        }
+      }
+    })
+  },
+
+  /**
+   * 更新头像
+   */
+  updateAvatar() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0]
+        this.uploadAvatar(tempFilePath)
+      }
+    })
+  },
+
+  /**
+   * 上传头像到云存储
+   */
+  uploadAvatar(tempFilePath) {
+    wx.showLoading({
+      title: '上传中...'
+    })
+
+    const cloudPath = `avatars/${Date.now()}-${Math.random()}.png`
+
+    wx.cloud.uploadFile({
+      cloudPath: cloudPath,
+      filePath: tempFilePath,
+      success: (res) => {
+        this.updateUserInfo({ avatarUrl: res.fileID })
+      },
+      fail: (err) => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '上传失败',
+          icon: 'none'
         })
       }
+    })
+  },
+
+  /**
+   * 更新昵称
+   */
+  updateNickName() {
+    wx.showModal({
+      title: '更新昵称',
+      editable: true,
+      placeholderText: '请输入新昵称',
+      success: (res) => {
+        if (res.confirm && res.content) {
+          this.updateUserInfo({ nickName: res.content })
+        }
+      }
+    })
+  },
+
+  /**
+   * 更新用户信息到云数据库
+   */
+  updateUserInfo(userInfo) {
+    const db = wx.cloud.database()
+
+    db.collection('users').where({
+      _openid: '{openid}'
+    }).get({
+      success: (result) => {
+        if (result.data.length === 0) {
+          db.collection('users').add({
+            data: {
+              ...userInfo,
+              createTime: db.serverDate(),
+              updateTime: db.serverDate()
+            },
+            success: () => {
+              this.saveUserInfoLocally(userInfo)
+            }
+          })
+        } else {
+          db.collection('users').doc(result.data[0]._id).update({
+            data: {
+              ...userInfo,
+              updateTime: db.serverDate()
+            },
+            success: () => {
+              this.saveUserInfoLocally(userInfo)
+            }
+          })
+        }
+      },
+      fail: (err) => {
+        wx.showToast({
+          title: '更新失败',
+          icon: 'none'
+        })
+      }
+    })
+  },
+
+  /**
+   * 保存用户信息到本地
+   */
+  saveUserInfoLocally(userInfo) {
+    const newUserInfo = { ...this.data.userInfo, ...userInfo }
+    app.globalData.userInfo = newUserInfo
+    this.setData({
+      userInfo: newUserInfo
+    })
+    wx.hideLoading()
+    wx.showToast({
+      title: '更新成功',
+      icon: 'success'
     })
   },
 
